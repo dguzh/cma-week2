@@ -1,0 +1,21 @@
+---
+title: "week2-rexercise"
+output: html_document
+date: "2023-04-28"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library("readr") 
+library("sf") 
+```
+
+```{r}
+wildschwein_BE <- read_delim("data/wildschwein_BE_2056.csv", ",")
+
+wildschwein_BE <- st_as_sf(wildschwein_BE, coords = c("E", "N"), crs = 2056, remove = FALSE)
+```
+
