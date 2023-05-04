@@ -180,3 +180,28 @@ ggplot() +
        color = "Sampling interval")
 ```
 
+# Task 7
+```{r}
+# Import your data as a data frame and convert it to an sf object, using the correct CRS information
+
+posmo <- read_delim("data/posmo_2023-01-01T00_00_00+01_00-2023-05-04T23_59_59+02_00.csv", ",")
+
+posmo <- st_as_sf(posmo, coords = c("lon_x", "lat_y"), crs = 4326, remove = FALSE)
+```
+
+```{r}
+# Convert your data to CH1903+ LV95
+
+posmo_lv95 <- st_transform(posmo, 2056)
+```
+
+```{r}
+# Make a map of your data using ggplot2
+
+ggplot() +
+  geom_sf(data = posmo_lv95) +
+  labs(title = "My Posmo Data",
+       x = "E",
+       y = "N")
+```
+
