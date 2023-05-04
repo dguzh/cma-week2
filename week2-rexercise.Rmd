@@ -19,3 +19,21 @@ wildschwein_BE <- read_delim("data/wildschwein_BE_2056.csv", ",")
 wildschwein_BE <- st_as_sf(wildschwein_BE, coords = c("E", "N"), crs = 2056, remove = FALSE)
 ```
 
+```{r}
+N1 <- 1204752
+N2 <- 1204863
+E1 <- 2570409
+E2 <- 2570402
+
+d = sqrt((N1 - N2)**2 + (E1 - E2)**2)
+d
+```
+
+
+
+
+
+
+
+
+
