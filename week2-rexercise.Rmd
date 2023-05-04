@@ -8,6 +8,7 @@ date: "2023-04-28"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Task 1
 ```{r}
 library("readr") 
 library("sf") 
@@ -19,21 +20,62 @@ wildschwein_BE <- read_delim("data/wildschwein_BE_2056.csv", ",")
 wildschwein_BE <- st_as_sf(wildschwein_BE, coords = c("E", "N"), crs = 2056, remove = FALSE)
 ```
 
+# Task 2
 ```{r}
-N1 <- 1204752
-N2 <- 1204863
-E1 <- 2570409
-E2 <- 2570402
-
-d = sqrt((N1 - N2)**2 + (E1 - E2)**2)
-d
+library("dplyr")
+library("ggplot2")
 ```
 
+```{r}
+#Calculate the time difference between subsequent rows
 
+wildschwein_BE <- wildschwein_BE |>
+  group_by(TierID) |>
+  mutate(timelag = as.integer(difftime(lead(DatetimeUTC), DatetimeUTC, units = "secs")))
+```
 
+```{r}
+# How many individuals were tracked?
 
+num_individuals <- wildschwein_BE$TierID |>
+  unique() |>
+  length()
 
+num_individuals
+```
 
+```{r}
+# For how long were the individual tracked? Are there gaps?
+# Here a gap is defined as more than 1 hour between fixes
+
+individual_duration <- wildschwein_BE |>
+  group_by(TierID) |>
+  summarise(start_time = min(DatetimeUTC),
+            end_time = max(DatetimeUTC),
+            duration = as.numeric(difftime(end_time, start_time, units = "hours")),
+            n_gaps = sum(length(which(timelag > 3600))))
+
+individual_duration
+```
+
+```{r}
+# Were all individuals tracked concurrently or sequentially?
+
+ggplot(wildschwein_BE, aes(DatetimeUTC, TierName)) + geom_point()
+
+# We can see from the plot that they were tracked concurrently.
+```
+
+```{r}
+# What is the temporal sampling interval between the locations?
+
+sampling_interval <- wildschwein_BE |>
+  group_by(TierID) |>
+  summarise(mean_interval = mean(timelag, na.rm = TRUE),
+            median_interval = median(timelag, na.rm = TRUE))
+
+sampling_interval
+```
 
 
 
